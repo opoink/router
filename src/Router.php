@@ -1,4 +1,8 @@
 <?php
+/**
+* Copyright 2021 Opoink Framework (http://opoink.com/)
+* Licensed under MIT, see LICENSE.md
+*/
 namespace Opoink\Router;
 class Router {
 
@@ -33,7 +37,13 @@ class Router {
 	    return $patternAsRegex;
 	}
 
-	public function get($pattern, $callback){
+	/**
+	 * return an array if the route matched
+	 * return null instead
+	 * @param $pattern is the pattern for the URI that will be matched
+	 * @param $callback instance of Closure
+	 */
+	public function get($pattern, $callback=null){
 		$patternAsRegex = $this->getRegex($pattern);
 		$testUrl = '';
 		if(isset($_SERVER['REQUEST_URI'])){
@@ -48,12 +58,25 @@ class Router {
 			}
 		}
 
-
 		if($callback instanceof \Closure){
 			$callback($params);
 		} else {
 			return $params;
 		}
-	}		
+	}
+	
+	public function getMatch($route){
+		if( !isset($route['method']) ){
+			return $this->get($route['pattern']); /** the method is not set means is any method */
+		} else {
+			if($route['method'] == "*"){ /** the method "*" means is any method */
+				return $this->get($route['pattern']);
+			} else {
+				if($_SERVER['REQUEST_METHOD'] == strtoupper($route['method'])){
+					return $this->get($route['pattern']);
+				}
+			}
+		}
+	}
 }
 ?>
