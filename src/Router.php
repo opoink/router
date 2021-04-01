@@ -49,6 +49,8 @@ class Router {
 		if(isset($_SERVER['REQUEST_URI'])){
 			$testUrl = $_SERVER['REQUEST_URI'];
 		}
+		$testUrl =	explode('?', $testUrl);
+		$testUrl = $testUrl[0];
 
 		$params = null;
 		if($patternAsRegex){
